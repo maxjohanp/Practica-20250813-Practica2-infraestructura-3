@@ -1,0 +1,41 @@
+# =============================================================================
+#  FGT-B · quitar la VPN sitio a sitio (Infras 1 y 2) antes de la Infra 3
+#  Seguridad de Redes · Infraestructura 3 · Maxyohan Montas (2025-0813)
+#
+#  En el laboratorio se hizo por la GUI, en este orden:
+#    1. Policy & Objects > Firewall Policy: borrar VPN-to-SERVER y
+#       SERVER-to-VPN (se conserva SERVER-to-INTERNET).
+#    2. Network > Static Routes: borrar las dos rutas a 10.20.25.0/25
+#       (por VPN-B-A y blackhole). Se conserva la ruta por defecto.
+#    3. VPN > IPsec Tunnels: borrar VPN-B-A (fase 1, fase 2 y su interfaz).
+#
+#  Por qué: la licencia de evaluación solo admite 3 interfaces, 3 políticas
+#  y 3 rutas, y un túnel no se puede borrar mientras una política o una ruta
+#  lo use. Así la Infra 3 se montó sin restaurar el snapshot S0_BASE.
+#
+#  Equivalente en CLI (IDs de la running-config de las Infras 1 y 2:
+#  políticas 1 y 2, rutas 2 y 3). Copia desde «config firewall policy».
+#  Las líneas con # de esta cabecera son solo explicación: no las pegues.
+# =============================================================================
+
+config firewall policy
+    delete 1
+    delete 2
+end
+
+config router static
+    delete 2
+    delete 3
+end
+
+config vpn ipsec phase2-interface
+    delete "VPN-B-A"
+end
+
+config vpn ipsec phase1-interface
+    delete "VPN-B-A"
+end
+
+show firewall policy
+show router static
+get vpn ipsec tunnel summary

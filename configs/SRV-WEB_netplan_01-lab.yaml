@@ -1,0 +1,12 @@
+# SRV-WEB (web-0813) · /etc/netplan/01-lab.yaml
+network:
+  version: 2
+  ethernets:
+    ens4:
+      dhcp4: false
+      addresses: [10.8.13.10/28]
+      routes:
+        - to: default
+          via: 10.8.13.1
+      nameservers:
+        addresses: [20.25.8.8]

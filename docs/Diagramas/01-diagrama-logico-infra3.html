@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<style>
+  html,body{margin:0;padding:0;background:#ffffff}
+  svg{display:block;font-family:Inter,"DejaVu Sans",Arial,sans-serif}
+  .t-name{font-size:17px;font-weight:700;fill:#0B1F3A}
+  .t-sub{font-size:13px;fill:#475569}
+  .t-ip{font-size:13.5px;font-weight:600;fill:#0B1F3A}
+  .t-port{font-size:12px;font-weight:600;fill:#334155}
+  .t-zone{font-size:15px;font-weight:700;letter-spacing:.06em}
+  .t-net{font-size:13px;font-weight:700}
+  .link{stroke:#334155;stroke-width:3;fill:none}
+</style></head>
+<body>
+<svg id="d" width="1600" height="900" viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Cortafuegos (FortiGate): rectángulo rojo con muro de ladrillos genérico -->
+    <g id="fw">
+      <rect x="-50" y="-34" width="100" height="68" rx="12" fill="#DA291C"/>
+      <g fill="#ffffff">
+        <rect x="-38" y="-24" width="34" height="12" rx="2"/><rect x="4" y="-24" width="34" height="12" rx="2"/>
+        <rect x="-38" y="-6" width="14" height="12" rx="2"/><rect x="-18" y="-6" width="36" height="12" rx="2"/><rect x="24" y="-6" width="14" height="12" rx="2"/>
+        <rect x="-38" y="12" width="34" height="12" rx="2"/><rect x="4" y="12" width="34" height="12" rx="2"/>
+      </g>
+    </g>
+    <!-- Router -->
+    <g id="rt">
+      <ellipse cx="0" cy="10" rx="46" ry="16" fill="#0A5F67"/>
+      <rect x="-46" y="-10" width="92" height="20" fill="#0E7C86"/>
+      <ellipse cx="0" cy="-10" rx="46" ry="16" fill="#14A3AF"/>
+      <g stroke="#ffffff" stroke-width="3" stroke-linecap="round" fill="none">
+        <path d="M-26 -10 H-6 M-12 -16 L-6 -10 L-12 -4"/>
+        <path d="M26 -10 H6 M12 -16 L6 -10 L12 -4"/>
+      </g>
+    </g>
+    <!-- Switch -->
+    <g id="sw">
+      <rect x="-50" y="-20" width="100" height="40" rx="8" fill="#5B6B7F"/>
+      <g stroke="#ffffff" stroke-width="3" stroke-linecap="round" fill="none">
+        <path d="M-28 -6 H24 M16 -12 L24 -6 L16 0"/>
+        <path d="M28 7 H-24 M-16 1 L-24 7 L-16 13"/>
+      </g>
+    </g>
+    <!-- PC -->
+    <g id="pc">
+      <rect x="-40" y="-34" width="80" height="54" rx="6" fill="#0B1F3A"/>
+      <rect x="-34" y="-28" width="68" height="42" rx="3" fill="#1D6FE0"/>
+      <path d="M-10 20 L-14 32 H14 L10 20 Z" fill="#0B1F3A"/>
+      <rect x="-26" y="31" width="52" height="5" rx="2" fill="#0B1F3A"/>
+      <path d="M-24 6 L-10 -8 L0 2 L12 -12 L24 0" stroke="#ffffff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+    <!-- Navegador (ADMIN) -->
+    <g id="br">
+      <rect x="-40" y="-34" width="80" height="54" rx="6" fill="#0B1F3A"/>
+      <rect x="-34" y="-28" width="68" height="42" rx="3" fill="#E2E8F0"/>
+      <rect x="-34" y="-28" width="68" height="10" fill="#94A3B8"/>
+      <circle cx="0" cy="-2" r="11" fill="none" stroke="#1D6FE0" stroke-width="2.5"/>
+      <path d="M-11 -2 H11 M0 -13 C-6 -6 -6 3 0 9 M0 -13 C6 -6 6 3 0 9" stroke="#1D6FE0" stroke-width="2" fill="none"/>
+      <path d="M-10 20 L-14 32 H14 L10 20 Z" fill="#0B1F3A"/>
+      <rect x="-26" y="31" width="52" height="5" rx="2" fill="#0B1F3A"/>
+    </g>
+    <!-- Servidor -->
+    <g id="srv">
+      <rect x="-32" y="-40" width="64" height="80" rx="6" fill="#1E293B"/>
+      <g fill="#334155"><rect x="-24" y="-32" width="48" height="16" rx="3"/><rect x="-24" y="-8" width="48" height="16" rx="3"/><rect x="-24" y="16" width="48" height="16" rx="3"/></g>
+      <g fill="#22C55E"><circle cx="16" cy="-24" r="3"/><circle cx="16" cy="0" r="3"/><circle cx="16" cy="24" r="3"/></g>
+      <g fill="#94A3B8"><rect x="-18" y="-26" width="22" height="4" rx="2"/><rect x="-18" y="-2" width="22" height="4" rx="2"/><rect x="-18" y="22" width="22" height="4" rx="2"/></g>
+    </g>
+    <!-- Candado -->
+    <g id="lock">
+      <rect x="-14" y="-4" width="28" height="22" rx="4" fill="#E8820C"/>
+      <path d="M-8 -4 V-10 A8 8 0 0 1 8 -10 V-4" stroke="#E8820C" stroke-width="4" fill="none"/>
+      <circle cx="0" cy="6" r="3.2" fill="#ffffff"/>
+    </g>
+  </defs>
+
+  <!-- Título -->
+  <text x="40" y="52" font-size="27" font-weight="800" fill="#0B1F3A">Infraestructura 3 · VPN de acceso remoto (cliente ⇄ FortiGate)</text>
+  <text x="40" y="80" font-size="15" fill="#475569">Diagrama lógico · Seguridad de Redes · Maxyohan Montas (2025-0813) · GNS3 2.2.61</text>
+
+  <!-- Zonas -->
+  <rect x="30" y="300" width="520" height="520" rx="18" fill="#EFF6FF" stroke="#BFDBFE" stroke-width="2"/>
+  <text x="530" y="332" text-anchor="end" class="t-zone" fill="#1D4ED8">SEDE DE USUARIOS</text>
+  <rect x="570" y="300" width="460" height="520" rx="18" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="2" stroke-dasharray="8 6"/>
+  <text x="800" y="336" text-anchor="middle" class="t-zone" fill="#475569">PROVEEDOR (ISP) · IPs PÚBLICAS</text>
+  <rect x="1050" y="300" width="520" height="520" rx="18" fill="#F0FDF4" stroke="#BBF7D0" stroke-width="2"/>
+  <text x="1074" y="332" class="t-zone" fill="#15803D">SEDE DEL SERVIDOR</text>
+
+  <!-- Túnel IPsec de acceso remoto: del PC (strongSwan) a FGT-B -->
+  <path d="M 125 392 C 250 170, 1050 170, 1150 512" stroke="#E8820C" stroke-width="5" fill="none" stroke-dasharray="14 9" stroke-linecap="round"/>
+  <use href="#lock" x="715" y="243"/>
+  <rect x="410" y="104" width="780" height="112" rx="14" fill="#FFF7ED" stroke="#FDBA74" stroke-width="2"/>
+  <text x="800" y="133" text-anchor="middle" font-size="17" font-weight="800" fill="#9A3412">Túnel IPsec de acceso remoto · PC-USER (strongSwan) ⇄ FGT-B (VPN-REMOTO)</text>
+  <text x="800" y="158" text-anchor="middle" font-size="14" font-weight="600" fill="#9A3412">IKEv1 agresivo + XAuth (vpnuser) · Mode Config: IP del pool 10.25.13.10 – .50</text>
+  <text x="800" y="181" text-anchor="middle" font-size="13.5" fill="#9A3412">DES-SHA1 · DH grupo 2 · PFS grupo 2 · NAT-T (UDP 4500) a través del PAT del Cisco</text>
+  <text x="800" y="203" text-anchor="middle" font-size="13.5" font-weight="700" fill="#9A3412">Por el túnel solo pasa SSH, ping y traceroute hacia 10.8.13.0/28</text>
+
+  <!-- Enlaces físicos -->
+  <path class="link" d="M 172 446 L 240 544"/>
+  <path class="link" d="M 172 664 L 240 556"/>
+  <path class="link" d="M 340 550 L 400 550"/>
+  <path class="link" d="M 500 550 L 590 550"/>
+  <path class="link" d="M 690 550 L 754 550"/>
+  <path class="link" d="M 846 550 L 1100 550"/>
+  <path class="link" d="M 1200 550 L 1260 550"/>
+  <path class="link" d="M 1360 546 L 1430 436"/>
+  <path class="link" d="M 1360 556 L 1428 664"/>
+  <path d="M 800 470 L 800 520" stroke="#334155" stroke-width="2.5" stroke-dasharray="4 4"/>
+
+  <!-- Usuarios -->
+  <use href="#pc" x="125" y="430"/>
+  <text x="125" y="492" text-anchor="middle" class="t-name">PC-USER</text>
+  <text x="125" y="510" text-anchor="middle" class="t-sub">pc-user20250813 · Ubuntu</text>
+  <text x="125" y="528" text-anchor="middle" class="t-ip">DHCP 10.20.25.10/25</text>
+  <text x="125" y="547" text-anchor="middle" class="t-port" fill="#9A3412" style="fill:#9A3412">VPN: 10.25.13.x (pool)</text>
+
+  <use href="#br" x="125" y="680"/>
+  <text x="125" y="742" text-anchor="middle" class="t-name">ADMIN-A</text>
+  <text x="125" y="760" text-anchor="middle" class="t-sub">Chromium-1 · navegador</text>
+  <text x="125" y="778" text-anchor="middle" class="t-ip">10.20.25.5/25</text>
+
+  <use href="#sw" x="290" y="550"/>
+  <text x="290" y="600" text-anchor="middle" class="t-name">SW-USERS</text>
+  <text x="290" y="618" text-anchor="middle" class="t-sub">Switch3 · trunk 802.1Q</text>
+
+  <use href="#rt" x="450" y="550"/>
+  <text x="450" y="604" text-anchor="middle" class="t-name">R-USERS</text>
+  <text x="450" y="622" text-anchor="middle" class="t-sub">R1 · Cisco 7200</text>
+  <text x="450" y="648" text-anchor="middle" class="t-port">Fa0/1.10 · VLAN 10</text>
+  <text x="450" y="666" text-anchor="middle" class="t-ip">10.20.25.1/25</text>
+  <text x="450" y="684" text-anchor="middle" class="t-sub">DHCP .10 – .100 · PAT</text>
+  <text x="450" y="702" text-anchor="middle" class="t-sub">no termina la VPN</text>
+  <text x="450" y="719" text-anchor="middle" class="t-sub">PAT de UDP 500 / 4500</text>
+
+  <!-- ISP -->
+  <use href="#sw" x="640" y="550"/>
+  <text x="640" y="600" text-anchor="middle" class="t-name">SW-WAN</text>
+  <text x="640" y="618" text-anchor="middle" class="t-sub">Switch2</text>
+
+  <use href="#rt" x="800" y="550"/>
+  <text x="800" y="604" text-anchor="middle" class="t-name">ISP</text>
+  <text x="800" y="622" text-anchor="middle" class="t-sub">R2 · Cisco 7200 · IOS 15.2</text>
+  <text x="800" y="642" text-anchor="middle" class="t-sub">sin rutas a redes 10.x privadas</text>
+
+  <path d="M 744 448 a 26 26 0 0 1 30 -36 a 34 34 0 0 1 60 6 a 24 24 0 0 1 22 32 Z" fill="#E2E8F0" stroke="#94A3B8" stroke-width="2"/>
+  <text x="800" y="384" text-anchor="middle" class="t-name">«Internet» simulado</text>
+  <text x="800" y="438" text-anchor="middle" class="t-ip">Lo0 20.25.8.8</text>
+
+  <!-- HTTPS publicado con Virtual IP -->
+  <rect x="592" y="672" width="416" height="104" rx="12" fill="#ECFDF5" stroke="#6EE7B7" stroke-width="2"/>
+  <text x="800" y="699" text-anchor="middle" font-size="15" font-weight="800" fill="#047857">HTTPS publicado sin VPN · Virtual IP</text>
+  <text x="800" y="723" text-anchor="middle" font-size="14" font-weight="700" fill="#065F46">https://20.25.8.13 → 10.8.13.10:443</text>
+  <text x="800" y="745" text-anchor="middle" font-size="13" fill="#065F46">Política WAN-to-WEB-HTTPS (port2 → port1)</text>
+  <text x="800" y="765" text-anchor="middle" font-size="13" fill="#065F46">Desde la WAN no hay ninguna política de SSH</text>
+
+  <!-- Etiquetas de puertos WAN -->
+  <text x="502" y="538" class="t-port">Fa0/0 WAN</text>
+  <text x="506" y="590" class="t-ip">20.25.8.2/30</text>
+  <text x="750" y="538" text-anchor="end" class="t-port">Fa0/0</text>
+  <text x="750" y="590" text-anchor="end" class="t-ip">20.25.8.1</text>
+  <text x="852" y="538" class="t-port">Fa0/1</text>
+  <text x="852" y="590" class="t-ip">20.25.8.14/30</text>
+  <text x="1094" y="538" text-anchor="end" class="t-port">port2 WAN</text>
+  <text x="1094" y="590" text-anchor="end" class="t-ip">20.25.8.13/30</text>
+
+  <!-- Servidor -->
+  <use href="#fw" x="1150" y="550"/>
+  <text x="1150" y="608" text-anchor="middle" class="t-name">FGT-B</text>
+  <text x="1150" y="626" text-anchor="middle" class="t-sub">FortiGate-VM 7.0.9</text>
+  <text x="1150" y="648" text-anchor="middle" class="t-port">port1 LAN-SRV</text>
+  <text x="1150" y="666" text-anchor="middle" class="t-ip">10.8.13.1/28</text>
+  <text x="1150" y="688" text-anchor="middle" class="t-sub">VPN-REMOTO (dial-up)</text>
+  <text x="1150" y="706" text-anchor="middle" class="t-sub">VIP-WEB-HTTPS</text>
+
+  <use href="#sw" x="1310" y="550"/>
+  <text x="1310" y="600" text-anchor="middle" class="t-name">SW-SRV</text>
+  <text x="1310" y="618" text-anchor="middle" class="t-sub">Switch4</text>
+
+  <use href="#srv" x="1475" y="420"/>
+  <text x="1475" y="482" text-anchor="middle" class="t-name">SRV-WEB</text>
+  <text x="1475" y="500" text-anchor="middle" class="t-sub">HTTPS 443 · SSH 22</text>
+  <text x="1475" y="518" text-anchor="middle" class="t-ip">10.8.13.10/28</text>
+
+  <use href="#br" x="1475" y="680"/>
+  <text x="1475" y="742" text-anchor="middle" class="t-name">ADMIN-B</text>
+  <text x="1475" y="760" text-anchor="middle" class="t-sub">Chromium-2 · GUI de FGT-B</text>
+  <text x="1475" y="778" text-anchor="middle" class="t-ip">10.8.13.11/28</text>
+
+  <!-- Redes -->
+  <rect x="44" y="796" width="250" height="14" rx="7" fill="#DBEAFE"/>
+  <text x="54" y="807" class="t-net" fill="#1D4ED8" font-size="12">VLAN 10 · usuarios 10.20.25.0/25</text>
+  <rect x="584" y="796" width="300" height="14" rx="7" fill="#E2E8F0"/>
+  <text x="594" y="807" class="t-net" fill="#334155" font-size="12">WAN A 20.25.8.0/30 · WAN B 20.25.8.12/30</text>
+  <rect x="1306" y="796" width="250" height="14" rx="7" fill="#DCFCE7"/>
+  <text x="1316" y="807" class="t-net" fill="#15803D" font-size="12">LAN del servidor 10.8.13.0/28</text>
+
+  <!-- Leyenda -->
+  <g transform="translate(40,860)">
+    <line x1="0" y1="0" x2="46" y2="0" stroke="#334155" stroke-width="3"/>
+    <text x="56" y="5" font-size="13.5" fill="#334155">Enlace físico</text>
+    <line x1="170" y1="0" x2="216" y2="0" stroke="#E8820C" stroke-width="5" stroke-dasharray="12 7"/>
+    <text x="226" y="5" font-size="13.5" fill="#334155">Túnel IPsec de acceso remoto (ESP dentro de UDP 4500)</text>
+    <text x="640" y="5" font-size="13.5" fill="#334155">FGT-A (FortiGate de usuarios) queda apagado: el borde de usuarios es R-USERS. FGT-B: 3 políticas.</text>
+  </g>
+</svg>
+</body></html>

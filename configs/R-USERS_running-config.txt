@@ -1,0 +1,78 @@
+! =============================================================================
+!  R-USERS (Cisco 7200 · IOS 15.2(4)S6) · configuración ESPERADA en la Infra 3
+!  Seguridad de Redes · Maxyohan Montas (2025-0813)
+! =============================================================================
+version 15.2
+service timestamps debug datetime msec
+service timestamps log datetime msec
+!
+hostname R-USERS
+!
+boot-start-marker
+boot-end-marker
+!
+no aaa new-model
+no ip icmp rate-limit unreachable
+!
+ip dhcp excluded-address 10.20.25.1 10.20.25.9
+ip dhcp excluded-address 10.20.25.101 10.20.25.126
+!
+ip dhcp pool USUARIOS-VLAN10
+ network 10.20.25.0 255.255.255.128
+ default-router 10.20.25.1
+ dns-server 20.25.8.8
+ lease 0 8
+!
+no ip domain lookup
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+ip tcp synwait-time 5
+!
+interface FastEthernet0/0
+ description WAN hacia ISP (IP publica)
+ ip address 20.25.8.2 255.255.255.252
+ ip nat outside
+ speed auto
+ duplex auto
+!
+interface FastEthernet0/1
+ description Trunk 802.1Q hacia SW-USERS
+ no ip address
+ speed auto
+ duplex auto
+!
+interface FastEthernet0/1.10
+ description LAN USUARIOS - VLAN 10
+ encapsulation dot1Q 10
+ ip address 10.20.25.1 255.255.255.128
+ ip nat inside
+!
+ip nat inside source list NAT-INTERNET interface FastEthernet0/0 overload
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+ip route 0.0.0.0 0.0.0.0 20.25.8.1
+!
+ip access-list extended NAT-INTERNET
+ deny   ip 10.20.25.0 0.0.0.127 10.8.13.0 0.0.0.15
+ permit ip 10.20.25.0 0.0.0.127 any
+!
+control-plane
+!
+line con 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+ stopbits 1
+line aux 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+ stopbits 1
+line vty 0 4
+ login
+!
+end

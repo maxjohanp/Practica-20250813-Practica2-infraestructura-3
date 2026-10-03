@@ -1,0 +1,27 @@
+! =============================================================================
+!  R-USERS · comandos de verificación usados en la Infraestructura 3
+!  Seguridad de Redes · Maxyohan Montas (2025-0813)
+!  Las líneas que empiezan con ! son explicación.
+! =============================================================================
+!
+! ---- Interfaces y DHCP (captura 02) ----
+! Fa0/0 20.25.8.2 y Fa0/1.10 10.20.25.1; ya no existe Tunnel0
+show ip interface brief
+! La IP entregada a PC-USER
+show ip dhcp binding
+!
+! ---- Rutas: solo la ruta por defecto hacia el ISP ----
+show ip route static
+!
+! ---- El Cisco no participa en la VPN: no debe haber ninguna SA ----
+show crypto isakmp sa
+!
+! ---- NAT con la VPN del PC conectada (captura 10) ----
+! Aparecen traducciones UDP 500 y 4500 de 10.20.25.x hacia 20.25.8.13:
+! el túnel del cliente atraviesa el PAT del Cisco (NAT-T)
+show ip nat translations
+show ip nat statistics
+!
+! ---- Exportar la configuración ----
+terminal length 0
+show running-config

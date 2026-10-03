@@ -1,0 +1,39 @@
+! =============================================================================
+!  R-USERS · quitar la VPN sitio a sitio que quedó de la Infraestructura 2
+!  Nodo GNS3: R1 · Cisco 7200 (Dynamips) · IOS 15.2(4)S6
+!  Seguridad de Redes · Infraestructura 3 · Maxyohan Montas (2025-0813)
+!
+!  La Infra 3 se montó SIN restaurar el snapshot S0_BASE: se partió del
+!  estado final de la Infra 2 y se quitó a mano el túnel VTI hacia FGT-B.
+!  Con esto R-USERS vuelve a su configuración base (r-users-base.txt): DHCP,
+!  NAT y ruta por defecto. En esta infraestructura el Cisco no termina VPN.
+!
+!  Además, el PC del usuario sale por el PAT con la misma IP pública que el
+!  Cisco (20.25.8.2): si el Cisco siguiera negociando IKE con 20.25.8.13,
+!  los dos usarían UDP 500 desde la misma IP.
+!
+!  Orden: primero las rutas y la interfaz de túnel; después el perfil, el
+!  transform-set y la política (IOS no borra un perfil que siga en uso).
+!  Para borrar la clave hay que escribirla: sustituye <CLAVE-PRECOMPARTIDA>.
+!  «ip cef» deshace el ajuste «no ip cef» de la Infra 2, que solo hacía
+!  falta para cifrar en la interfaz de túnel del Cisco emulado.
+! =============================================================================
+enable
+configure terminal
+no ip route 10.8.13.0 255.255.255.240 Tunnel0
+no ip route 10.8.13.0 255.255.255.240 Null0 254
+no interface Tunnel0
+no crypto ipsec profile PROF-FGT
+no crypto ipsec transform-set TS-FGT
+no crypto isakmp keepalive
+no crypto isakmp key <CLAVE-PRECOMPARTIDA> address 20.25.8.13
+no crypto isakmp policy 10
+ip cef
+end
+write memory
+!
+! Verificación: ya no hay Tunnel0, solo queda la ruta por defecto y la
+! última línea no debe mostrar nada (sin crypto, sin túnel y con CEF activo)
+show ip interface brief
+show ip route static
+show running-config | include crypto|Tunnel|cef

@@ -1,0 +1,69 @@
+! =============================================================================
+!  R-USERS · borde Cisco de la sede de usuarios (red base)
+!  Nodo GNS3: R1 · Cisco 7200 (Dynamips) · IOS 15.2(4)S6
+!  Seguridad de Redes · Infraestructura 3 · Maxyohan Montas (2025-0813)
+!
+!  VLAN 10 (subinterfaz dot1Q), servidor DHCP para los usuarios, NAT (PAT)
+!  hacia «Internet» y ruta por defecto al ISP.
+!
+!  En la Infraestructura 3 el Cisco NO participa en la VPN: el túnel lo
+!  levanta el propio PC-USER (strongSwan) hasta FGT-B, y R-USERS solo traduce
+!  con PAT sus paquetes IKE / NAT-T (UDP 500 y 4500) hacia 20.25.8.13.
+!  Se mantiene la exclusión del NAT hacia 10.8.13.0/28: sin VPN esa red
+!  privada no tiene camino (el ISP no la conoce).
+!
+!  R-USERS y FGT-A comparten 10.20.25.1 y 20.25.8.2: nunca se encienden a la
+!  vez. Al cambiar de uno a otro: «clear arp-cache» en el ISP y renovar el
+!  DHCP en PC-USER (sudo networkctl reconfigure ens4).
+! =============================================================================
+enable
+configure terminal
+hostname R-USERS
+no ip domain lookup
+!
+! ---- DHCP: reparte 10.20.25.10 - .100 (se excluye el resto) ----
+ip dhcp excluded-address 10.20.25.1 10.20.25.9
+ip dhcp excluded-address 10.20.25.101 10.20.25.126
+ip dhcp pool USUARIOS-VLAN10
+ network 10.20.25.0 255.255.255.128
+ default-router 10.20.25.1
+ dns-server 20.25.8.8
+ lease 0 8
+ exit
+!
+! ---- WAN hacia el ISP (IP pública) ----
+interface FastEthernet0/0
+ description WAN hacia ISP (IP publica)
+ ip address 20.25.8.2 255.255.255.252
+ ip nat outside
+ no shutdown
+ exit
+!
+! ---- Trunk 802.1Q hacia SW-USERS y subinterfaz de la VLAN 10 ----
+interface FastEthernet0/1
+ description Trunk 802.1Q hacia SW-USERS
+ no ip address
+ no shutdown
+ exit
+interface FastEthernet0/1.10
+ description LAN USUARIOS - VLAN 10
+ encapsulation dot1Q 10
+ ip address 10.20.25.1 255.255.255.128
+ ip nat inside
+ exit
+!
+! ---- NAT: los usuarios salen con la IP de la WAN (PAT) ----
+! ---- El tráfico hacia la red privada del servidor NO se traduce ----
+ip access-list extended NAT-INTERNET
+ deny   ip 10.20.25.0 0.0.0.127 10.8.13.0 0.0.0.15
+ permit ip 10.20.25.0 0.0.0.127 any
+ exit
+ip nat inside source list NAT-INTERNET interface FastEthernet0/0 overload
+ip route 0.0.0.0 0.0.0.0 20.25.8.1
+end
+write memory
+!
+! Verificación
+show ip interface brief
+show ip route
+ping 20.25.8.1

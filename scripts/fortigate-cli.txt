@@ -1,0 +1,47 @@
+# =============================================================================
+#  FortiGate FGT-B · comandos de CLI usados en la Infraestructura 3
+#  Seguridad de Redes · Maxyohan Montas (2025-0813)
+#
+#  Toda la configuración de FGT-B se hizo por la GUI. La CLI solo se usó para
+#  exportar la configuración y verificar. El equivalente en CLI de toda la
+#  configuración está en fgt-b-config-cli.txt.
+#  Las líneas con # son explicación: copia solo los comandos de cada bloque.
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# 1) Exportar la configuración en ejecución (consola del nodo en GNS3).
+#    La salida se guardó en configs/FGT-B_running-config.txt, con la clave
+#    precompartida (psksecret) y la contraseña de vpnuser (passwd) eliminadas.
+# -----------------------------------------------------------------------------
+config system console
+    set output standard
+end
+show system interface port1
+show system interface port2
+show firewall address NET-SERVER
+show firewall address VPN-POOL
+show user local
+show user group VPN-USERS
+show vpn ipsec phase1-interface
+show vpn ipsec phase2-interface
+show firewall vip
+show router static
+show firewall policy
+
+# -----------------------------------------------------------------------------
+# 2) Verificación con el cliente conectado (sudo ipsec up fgt en PC-USER)
+#    El par aparece como 20.25.8.2 (el PAT del Cisco) con NAT-T (puerto 4500)
+#    y el usuario XAuth vpnuser; la ruta al cliente (10.25.13.x) se crea sola.
+# -----------------------------------------------------------------------------
+get vpn ipsec tunnel summary
+diagnose vpn ike gateway list
+diagnose vpn tunnel list
+get router info routing-table all
+
+# -----------------------------------------------------------------------------
+# 3) Si el cliente no conecta: depuración de IKE (detenerla al terminar)
+# -----------------------------------------------------------------------------
+diagnose debug application ike -1
+diagnose debug enable
+diagnose debug disable
+diagnose debug reset

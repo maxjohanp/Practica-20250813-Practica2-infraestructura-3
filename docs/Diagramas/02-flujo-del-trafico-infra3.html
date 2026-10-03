@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<style>
+  html,body{margin:0;padding:0;background:#ffffff}
+  svg{display:block;font-family:Inter,"DejaVu Sans",Arial,sans-serif}
+  .h{font-size:15px;font-weight:800;fill:#ffffff}
+  .b{font-size:13.5px;fill:#0B1F3A}
+  .bb{font-size:13.5px;font-weight:700;fill:#0B1F3A}
+  .s{font-size:12.5px;fill:#475569}
+  .r{font-size:13.5px;font-weight:700;fill:#B91C1C}
+  .res{font-size:14px;font-weight:700}
+</style></head>
+<body>
+<svg width="1600" height="900" viewBox="0 0 1600 900" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="ar" markerUnits="userSpaceOnUse" markerWidth="16" markerHeight="16" refX="14" refY="8" orient="auto"><path d="M0,0 L16,8 L0,16 z" fill="#334155"/></marker>
+    <marker id="arG" markerUnits="userSpaceOnUse" markerWidth="18" markerHeight="18" refX="16" refY="9" orient="auto"><path d="M0,0 L18,9 L0,18 z" fill="#E8820C"/></marker>
+    <g id="xx"><circle r="20" fill="#DC2626"/><path d="M-8 -8 L8 8 M8 -8 L-8 8" stroke="#fff" stroke-width="4.5" stroke-linecap="round"/></g>
+  </defs>
+
+  <text x="40" y="50" font-size="26" font-weight="800" fill="#0B1F3A">Infraestructura 3 · Qué entra sin VPN y qué solo entra por la VPN</text>
+  <text x="40" y="78" font-size="15" fill="#475569">FGT-B publica el HTTPS con un Virtual IP (20.25.8.13:443). El SSH no tiene ninguna política desde la WAN: solo entra por el túnel VPN-REMOTO que levanta el PC.</text>
+
+  <!-- ============ CARRIL 1: HTTPS PÚBLICO SIN VPN ============ -->
+  <rect x="30" y="100" width="1540" height="232" rx="16" fill="#F0FDF4" stroke="#BBF7D0" stroke-width="2"/>
+  <rect x="50" y="114" width="420" height="30" rx="15" fill="#16A34A"/>
+  <text x="260" y="134" text-anchor="middle" font-size="14" font-weight="800" fill="#fff">① SIN VPN · HTTPS PÚBLICO POR EL VIRTUAL IP</text>
+
+  <rect x="50" y="158" width="200" height="120" rx="12" fill="#fff" stroke="#93C5FD" stroke-width="2"/>
+  <rect x="50" y="158" width="200" height="30" rx="12" fill="#1D6FE0"/><rect x="50" y="176" width="200" height="12" fill="#1D6FE0"/>
+  <text x="150" y="179" text-anchor="middle" class="h">PC-USER</text>
+  <text x="150" y="212" text-anchor="middle" class="bb">10.20.25.10</text>
+  <text x="150" y="234" text-anchor="middle" class="s">curl -kI https://20.25.8.13</text>
+  <text x="150" y="254" text-anchor="middle" class="s">(o el navegador)</text>
+
+  <rect x="320" y="158" width="310" height="130" rx="12" fill="#fff" stroke="#5EEAD4" stroke-width="2"/>
+  <rect x="320" y="158" width="310" height="30" rx="12" fill="#0E7C86"/><rect x="320" y="176" width="310" height="12" fill="#0E7C86"/>
+  <text x="475" y="179" text-anchor="middle" class="h">R-USERS (Cisco)</text>
+  <text x="336" y="210" class="b">ACL <tspan font-weight="700">NAT-INTERNET</tspan>: permit</text>
+  <rect x="334" y="220" width="282" height="26" rx="6" fill="#DCFCE7"/>
+  <text x="344" y="238" class="b">PAT: 10.20.25.10 → <tspan font-weight="700">20.25.8.2</tspan></text>
+  <text x="336" y="270" class="s">ruta por defecto → 20.25.8.1 (ISP)</text>
+
+  <rect x="700" y="158" width="250" height="120" rx="12" fill="#fff" stroke="#5EEAD4" stroke-width="2"/>
+  <rect x="700" y="158" width="250" height="30" rx="12" fill="#0E7C86"/><rect x="700" y="176" width="250" height="12" fill="#0E7C86"/>
+  <text x="825" y="179" text-anchor="middle" class="h">ISP</text>
+  <text x="825" y="212" text-anchor="middle" class="b">destino <tspan font-weight="700">20.25.8.13</tspan></text>
+  <text x="825" y="234" text-anchor="middle" class="b">red conectada (WAN B)</text>
+  <text x="825" y="254" text-anchor="middle" class="s">solo ve IPs públicas</text>
+
+  <rect x="1020" y="158" width="240" height="130" rx="12" fill="#fff" stroke="#FCA5A5" stroke-width="2"/>
+  <rect x="1020" y="158" width="240" height="30" rx="12" fill="#DA291C"/><rect x="1020" y="176" width="240" height="12" fill="#DA291C"/>
+  <text x="1140" y="179" text-anchor="middle" class="h">FGT-B</text>
+  <text x="1140" y="210" text-anchor="middle" class="bb">VIP-WEB-HTTPS</text>
+  <rect x="1032" y="220" width="216" height="26" rx="6" fill="#DCFCE7"/>
+  <text x="1140" y="238" text-anchor="middle" font-size="12.5" font-weight="600" fill="#0B1F3A">20.25.8.13:443 → 10.8.13.10:443</text>
+  <text x="1140" y="270" text-anchor="middle" class="s">política WAN-to-WEB-HTTPS</text>
+
+  <rect x="1330" y="158" width="220" height="120" rx="12" fill="#fff" stroke="#86EFAC" stroke-width="2"/>
+  <rect x="1330" y="158" width="220" height="30" rx="12" fill="#15803D"/><rect x="1330" y="176" width="220" height="12" fill="#15803D"/>
+  <text x="1440" y="179" text-anchor="middle" class="h">SRV-WEB</text>
+  <text x="1440" y="212" text-anchor="middle" class="bb">10.8.13.10</text>
+  <text x="1440" y="234" text-anchor="middle" class="b">Apache · HTTPS 443</text>
+  <text x="1440" y="254" text-anchor="middle" class="s">responde por FGT-B</text>
+
+  <line x1="252" y1="213" x2="314" y2="213" stroke="#334155" stroke-width="3" marker-end="url(#ar)"/>
+  <line x1="632" y1="213" x2="694" y2="213" stroke="#334155" stroke-width="3" marker-end="url(#ar)"/>
+  <line x1="952" y1="213" x2="1014" y2="213" stroke="#334155" stroke-width="3" marker-end="url(#ar)"/>
+  <line x1="1262" y1="213" x2="1324" y2="213" stroke="#334155" stroke-width="3" marker-end="url(#ar)"/>
+  <text x="1550" y="318" text-anchor="end" class="res" fill="#15803D">Resultado esperado: HTTP/1.1 200 OK sin VPN · el usuario solo conoce la IP pública 20.25.8.13</text>
+
+  <!-- ============ CARRIL 2: SSH POR LA VPN ============ -->
+  <rect x="30" y="346" width="1540" height="248" rx="16" fill="#FFF7ED" stroke="#FED7AA" stroke-width="2"/>
+  <rect x="50" y="360" width="540" height="30" rx="15" fill="#E8820C"/>
+  <text x="320" y="380" text-anchor="middle" font-size="14" font-weight="800" fill="#fff">② CON VPN · SSH POR EL TÚNEL DE ACCESO REMOTO (sudo ipsec up fgt)</text>
+
+  <rect x="50" y="404" width="200" height="130" rx="12" fill="#fff" stroke="#93C5FD" stroke-width="2"/>
+  <rect x="50" y="404" width="200" height="30" rx="12" fill="#1D6FE0"/><rect x="50" y="422" width="200" height="12" fill="#1D6FE0"/>
+  <text x="150" y="425" text-anchor="middle" class="h">PC-USER</text>
+  <text x="150" y="458" text-anchor="middle" class="bb">IP de la VPN 10.25.13.x</text>
+  <text x="150" y="480" text-anchor="middle" class="s">ssh · ping · traceroute</text>
+  <text x="150" y="500" text-anchor="middle" class="s">hacia 10.8.13.10</text>
+  <text x="150" y="522" text-anchor="middle" class="s">strongSwan cifra aquí</text>
+
+  <rect x="320" y="404" width="310" height="130" rx="12" fill="#fff" stroke="#5EEAD4" stroke-width="2"/>
+  <rect x="320" y="404" width="310" height="30" rx="12" fill="#0E7C86"/><rect x="320" y="422" width="310" height="12" fill="#0E7C86"/>
+  <text x="475" y="425" text-anchor="middle" class="h">R-USERS (Cisco)</text>
+  <text x="336" y="456" class="b">Solo ve <tspan font-weight="700">UDP 500 / 4500</tspan> (NAT-T)</text>
+  <rect x="334" y="466" width="282" height="26" rx="6" fill="#FFEDD5"/>
+  <text x="344" y="484" class="b">PAT: 10.20.25.10 → <tspan font-weight="700">20.25.8.2</tspan></text>
+  <text x="336" y="516" class="s">no descifra nada: no termina la VPN</text>
+
+  <rect x="700" y="404" width="250" height="120" rx="12" fill="#fff" stroke="#5EEAD4" stroke-width="2"/>
+  <rect x="700" y="404" width="250" height="30" rx="12" fill="#0E7C86"/><rect x="700" y="422" width="250" height="12" fill="#0E7C86"/>
+  <text x="825" y="425" text-anchor="middle" class="h">ISP</text>
+  <text x="825" y="458" text-anchor="middle" class="b">Solo ve <tspan font-weight="700">ESP en UDP 4500</tspan></text>
+  <text x="825" y="480" text-anchor="middle" class="bb">20.25.8.2 ⇄ 20.25.8.13</text>
+  <text x="825" y="500" text-anchor="middle" class="s">contenido cifrado (DES-SHA1)</text>
+
+  <rect x="1020" y="404" width="240" height="140" rx="12" fill="#fff" stroke="#FCA5A5" stroke-width="2"/>
+  <rect x="1020" y="404" width="240" height="30" rx="12" fill="#DA291C"/><rect x="1020" y="422" width="240" height="12" fill="#DA291C"/>
+  <text x="1140" y="425" text-anchor="middle" class="h">FGT-B</text>
+  <text x="1140" y="456" text-anchor="middle" class="b">Descifra (<tspan font-weight="700">VPN-REMOTO</tspan>)</text>
+  <text x="1140" y="476" text-anchor="middle" class="s">XAuth: vpnuser (VPN-USERS)</text>
+  <rect x="1032" y="486" width="216" height="26" rx="6" fill="#FFEDD5"/>
+  <text x="1140" y="504" text-anchor="middle" class="b">Política <tspan font-weight="700">VPN-to-SERVER</tspan></text>
+  <text x="1140" y="530" text-anchor="middle" class="s">SSH · PING · TRACEROUTE · sin NAT</text>
+
+  <rect x="1330" y="404" width="220" height="120" rx="12" fill="#fff" stroke="#86EFAC" stroke-width="2"/>
+  <rect x="1330" y="404" width="220" height="30" rx="12" fill="#15803D"/><rect x="1330" y="422" width="220" height="12" fill="#15803D"/>
+  <text x="1440" y="425" text-anchor="middle" class="h">SRV-WEB</text>
+  <text x="1440" y="458" text-anchor="middle" class="bb">10.8.13.10</text>
+  <text x="1440" y="480" text-anchor="middle" class="b">sshd · puerto 22</text>
+  <text x="1440" y="500" text-anchor="middle" class="s">responde a 10.25.13.x</text>
+  <text x="1440" y="516" text-anchor="middle" class="s">por el mismo túnel</text>
+
+  <line x1="252" y1="459" x2="314" y2="459" stroke="#E8820C" stroke-width="4" stroke-dasharray="10 6" marker-end="url(#arG)"/>
+  <line x1="632" y1="459" x2="694" y2="459" stroke="#E8820C" stroke-width="4" stroke-dasharray="10 6" marker-end="url(#arG)"/>
+  <line x1="952" y1="459" x2="1014" y2="459" stroke="#E8820C" stroke-width="4" stroke-dasharray="10 6" marker-end="url(#arG)"/>
+  <line x1="1262" y1="459" x2="1324" y2="459" stroke="#334155" stroke-width="3" marker-end="url(#ar)"/>
+  <text x="1550" y="580" text-anchor="end" class="res" fill="#9A3412">Resultado esperado: ssh entra · ping responde · traceroute en 2 saltos (FGT-B → 10.8.13.10): el túnel oculta al Cisco y al ISP</text>
+
+  <!-- ============ CARRIL 3: SSH SIN VPN ============ -->
+  <rect x="30" y="608" width="1540" height="240" rx="16" fill="#FEF2F2" stroke="#FECACA" stroke-width="2"/>
+  <rect x="50" y="622" width="300" height="30" rx="15" fill="#DC2626"/>
+  <text x="200" y="642" text-anchor="middle" font-size="14" font-weight="800" fill="#fff">③ SIN VPN · SSH BLOQUEADO</text>
+
+  <rect x="50" y="666" width="200" height="130" rx="12" fill="#fff" stroke="#93C5FD" stroke-width="2"/>
+  <rect x="50" y="666" width="200" height="30" rx="12" fill="#1D6FE0"/><rect x="50" y="684" width="200" height="12" fill="#1D6FE0"/>
+  <text x="150" y="687" text-anchor="middle" class="h">PC-USER</text>
+  <text x="150" y="720" text-anchor="middle" class="bb">10.20.25.10</text>
+  <text x="150" y="744" text-anchor="middle" class="b">a · ssh → 10.8.13.10</text>
+  <text x="150" y="766" text-anchor="middle" class="b">b · ssh → 20.25.8.13</text>
+
+  <rect x="320" y="666" width="310" height="130" rx="12" fill="#fff" stroke="#5EEAD4" stroke-width="2"/>
+  <rect x="320" y="666" width="310" height="30" rx="12" fill="#0E7C86"/><rect x="320" y="684" width="310" height="12" fill="#0E7C86"/>
+  <text x="475" y="687" text-anchor="middle" class="h">R-USERS (Cisco)</text>
+  <text x="336" y="720" class="b"><tspan font-weight="700">a</tspan> · ACL deny: sin NAT, sale con la</text>
+  <text x="336" y="740" class="b">     IP privada hacia el ISP</text>
+  <text x="336" y="766" class="b"><tspan font-weight="700">b</tspan> · PAT normal → 20.25.8.2</text>
+
+  <rect x="700" y="666" width="250" height="130" rx="12" fill="#fff" stroke="#5EEAD4" stroke-width="2"/>
+  <rect x="700" y="666" width="250" height="30" rx="12" fill="#0E7C86"/><rect x="700" y="684" width="250" height="12" fill="#0E7C86"/>
+  <text x="825" y="687" text-anchor="middle" class="h">ISP</text>
+  <text x="825" y="720" class="r" text-anchor="middle">a · sin ruta a 10.8.13.0/28</text>
+  <text x="825" y="740" class="r" text-anchor="middle">→ lo descarta</text>
+  <text x="825" y="766" text-anchor="middle" class="b">b · entrega a 20.25.8.13</text>
+
+  <rect x="1020" y="666" width="240" height="130" rx="12" fill="#fff" stroke="#FCA5A5" stroke-width="2"/>
+  <rect x="1020" y="666" width="240" height="30" rx="12" fill="#DA291C"/><rect x="1020" y="684" width="240" height="12" fill="#DA291C"/>
+  <text x="1140" y="687" text-anchor="middle" class="h">FGT-B</text>
+  <text x="1140" y="720" class="r" text-anchor="middle">b · puerto 22 en la WAN:</text>
+  <text x="1140" y="740" class="r" text-anchor="middle">sin VIP ni política</text>
+  <text x="1140" y="760" class="r" text-anchor="middle">→ lo descarta</text>
+
+  <g opacity="0.33">
+    <rect x="1330" y="666" width="220" height="130" rx="12" fill="#fff" stroke="#94A3B8" stroke-width="2" stroke-dasharray="6 5"/>
+    <text x="1440" y="726" text-anchor="middle" class="bb">SRV-WEB</text>
+    <text x="1440" y="748" text-anchor="middle" class="s">no recibe nada</text>
+  </g>
+
+  <line x1="252" y1="721" x2="314" y2="721" stroke="#334155" stroke-width="3" marker-end="url(#ar)"/>
+  <line x1="632" y1="721" x2="694" y2="721" stroke="#334155" stroke-width="3" marker-end="url(#ar)"/>
+  <line x1="952" y1="762" x2="1014" y2="762" stroke="#334155" stroke-width="3" marker-end="url(#ar)"/>
+  <text x="983" y="784" text-anchor="middle" class="s">solo b</text>
+  <use href="#xx" x="1295" y="731"/>
+  <text x="1550" y="836" text-anchor="end" class="res" fill="#B91C1C">Resultado esperado: «Connection timed out» en los dos casos  →  el SSH al servidor solo existe dentro de la VPN</text>
+
+  <text x="40" y="880" font-size="13.5" fill="#475569">Las 3 políticas de FGT-B (límite de la licencia de evaluación): WAN-to-WEB-HTTPS (HTTPS por el VIP) · VPN-to-SERVER (SSH, ping y traceroute desde el pool de la VPN) · SERVER-to-INTERNET.</text>
+</svg>
+</body></html>

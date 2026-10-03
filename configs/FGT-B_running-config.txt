@@ -1,0 +1,149 @@
+# =============================================================================
+#  FGT-B (FortiGate-VM 7.0.9, sede del servidor) · configuración ESPERADA en la Infra 3
+#  Seguridad de Redes · Maxyohan Montas (2025-0813)
+# =============================================================================
+
+config system global
+    set admintimeout 480
+    set alias "FortiGate-VM64-KVM"
+    set hostname "FGT-B"
+    set timezone 15
+end
+
+config system interface
+    edit "port1"
+        set vdom "root"
+        set ip 10.8.13.1 255.255.255.240
+        set allowaccess ping https ssh http
+        set type physical
+        set alias "LAN-SRV"
+    next
+    edit "port2"
+        set vdom "root"
+        set ip 20.25.8.13 255.255.255.252
+        set allowaccess ping
+        set type physical
+        set alias "WAN"
+        set role wan
+    next
+    edit "VPN-REMOTO"
+        set vdom "root"
+        set type tunnel
+        set interface "port2"
+    next
+end
+
+config firewall address
+    edit "NET-USERS"
+        set subnet 10.20.25.0 255.255.255.128
+    next
+    edit "NET-SERVER"
+        set subnet 10.8.13.0 255.255.255.240
+    next
+    edit "VPN-POOL"
+        set type iprange
+        set start-ip 10.25.13.10
+        set end-ip 10.25.13.50
+    next
+end
+
+config user local
+    edit "vpnuser"
+        set type password
+        set passwd ENC <ELIMINADO>
+    next
+end
+
+config user group
+    edit "VPN-USERS"
+        set member "vpnuser"
+    next
+end
+
+config vpn ipsec phase1-interface
+    edit "VPN-REMOTO"
+        set type dynamic
+        set interface "port2"
+        set mode aggressive
+        set peertype any
+        set net-device disable
+        set mode-cfg enable
+        set proposal des-sha1
+        set dpd on-idle
+        set dhgrp 2
+        set xauthtype auto
+        set authusrgrp "VPN-USERS"
+        set ipv4-start-ip 10.25.13.10
+        set ipv4-end-ip 10.25.13.50
+        set ipv4-netmask 255.255.255.255
+        set psksecret ENC <ELIMINADO>
+    next
+end
+
+config vpn ipsec phase2-interface
+    edit "VPN-REMOTO"
+        set phase1name "VPN-REMOTO"
+        set proposal des-sha1
+        set dhgrp 2
+        set keylifeseconds 43200
+        set src-addr-type name
+        set dst-addr-type name
+        set src-name "NET-SERVER"
+        set dst-name "all"
+    next
+end
+
+config firewall vip
+    edit "VIP-WEB-HTTPS"
+        set extip 20.25.8.13
+        set mappedip "10.8.13.10"
+        set extintf "port2"
+        set portforward enable
+        set extport 443
+        set mappedport 443
+    next
+end
+
+config router static
+    edit 1
+        set gateway 20.25.8.14
+        set device "port2"
+    next
+end
+
+config firewall policy
+    edit 3
+        set name "SERVER-to-INTERNET"
+        set srcintf "port1"
+        set dstintf "port2"
+        set action accept
+        set srcaddr "NET-SERVER"
+        set dstaddr "all"
+        set schedule "always"
+        set service "ALL"
+        set logtraffic all
+        set nat enable
+    next
+    edit 4
+        set name "WAN-to-WEB-HTTPS"
+        set srcintf "port2"
+        set dstintf "port1"
+        set action accept
+        set srcaddr "all"
+        set dstaddr "VIP-WEB-HTTPS"
+        set schedule "always"
+        set service "HTTPS"
+        set logtraffic all
+    next
+    edit 5
+        set name "VPN-to-SERVER"
+        set srcintf "VPN-REMOTO"
+        set dstintf "port1"
+        set action accept
+        set srcaddr "VPN-POOL"
+        set dstaddr "NET-SERVER"
+        set schedule "always"
+        set service "SSH" "PING" "TRACEROUTE"
+        set logtraffic all
+    next
+end

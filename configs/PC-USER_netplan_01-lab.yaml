@@ -1,0 +1,8 @@
+# PC-USER (pc-user20250813) · /etc/netplan/01-lab.yaml
+# En las Infras 2 y 3 la IP la entrega el DHCP de R-USERS (Cisco): 10.20.25.10 - .100, gateway 10.20.25.1
+network:
+  version: 2
+  ethernets:
+    ens4:
+      dhcp4: true
+      dhcp-identifier: mac

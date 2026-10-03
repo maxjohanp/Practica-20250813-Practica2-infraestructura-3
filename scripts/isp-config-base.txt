@@ -1,0 +1,38 @@
+! =============================================================================
+!  ISP · proveedor de Internet simulado
+!  Nodo GNS3: R2 · Cisco 7200 (Dynamips) · IOS 15.2(4)S6 · hostname ISP
+!  Seguridad de Redes · Infraestructura 3 · Maxyohan Montas (2025-0813)
+!
+!  Se pega en la consola del ISP. El ISP solo conoce sus redes directamente
+!  conectadas: no tiene ruta por defecto ni rutas hacia las redes privadas
+!  10.x.x.x, así que ninguna red privada puede cruzarlo sin VPN o NAT.
+!
+!  Coincide con configs/ISP_running-config.txt (el resto de líneas de esa
+!  running-config son valores de fábrica de la plantilla de GNS3).
+! =============================================================================
+enable
+configure terminal
+hostname ISP
+no ip domain lookup
+!
+interface Loopback0
+ description Internet simulado
+ ip address 20.25.8.8 255.255.255.255
+!
+interface FastEthernet0/0
+ description WAN A - borde de usuarios (via SW-WAN)
+ ip address 20.25.8.1 255.255.255.252
+ no shutdown
+!
+interface FastEthernet0/1
+ description WAN B - FGT-B (sede servidor)
+ ip address 20.25.8.14 255.255.255.252
+ no shutdown
+!
+end
+write memory
+!
+! Verificación
+show ip interface brief
+ping 20.25.8.2
+ping 20.25.8.13

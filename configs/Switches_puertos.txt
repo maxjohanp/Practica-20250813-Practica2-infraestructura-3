@@ -1,0 +1,22 @@
+Switches de GNS3 (Ethernet switch integrado) · configuración de puertos
+Infraestructura 3 (igual que la 2). Los switches de GNS3 no tienen running-config: se configuran
+en clic derecho > Configure > Ports. Esta es la tabla aplicada.
+
+SW-USERS (nodo Switch3) · sede de usuarios
+  Puerto  Tipo    VLAN  Conectado a
+  e0      access  10    PC-1 (PC-USER) e0
+  e1      access  10    Chromium-1 (ADMIN-A) eth0
+  e2      access  10    FortiGate7.0.9-2 (FGT-A) port1  -> apagado en las Infras 2 y 3
+  e3      dot1q   1     R1 (R-USERS) f0/1: trunk 802.1Q que lleva la VLAN 10 etiquetada
+
+SW-WAN (nodo Switch2) · enlace WAN del lado de usuarios
+  Todos los puertos access VLAN 1 (por defecto)
+  e0  R2 (ISP) f0/0
+  e1  FortiGate7.0.9-2 (FGT-A) port2  -> apagado en las Infras 2 y 3
+  e2  R1 (R-USERS) f0/0
+
+SW-SRV (nodo Switch4) · sede del servidor
+  Todos los puertos access VLAN 1 (por defecto)
+  e0  FortiGate7.0.9-4 (FGT-B) port1
+  e1  Web0813-2 (SRV-WEB) e0
+  e2  Chromium-2 (ADMIN-B) eth0
